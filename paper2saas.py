@@ -4,11 +4,12 @@ from pydantic import BaseModel, Field
 
 # Agno Imports
 from agno.agent import Agent
-from agno.workflow import Workflow, Step, Parallel
-from agno.workflow.types import StepInput, StepOutput
+from agno.team import Team
+# from agno.workflow import Workflow, Step, Parallel
+# from agno.workflow.types import StepInput, StepOutput
 from agno.db.sqlite import SqliteDb  # ← Use sync DB to avoid async errors
 from agno.tools.reasoning import ReasoningTools
-from agno.tools.workflow import WorkflowTools
+# from agno.tools.workflow import WorkflowTools
 from agno.tools.arxiv import ArxivTools
 from agno.tools.hackernews import HackerNewsTools
 from agno.tools.website import WebsiteTools
@@ -249,63 +250,94 @@ Create a professional executive report synthesizing all prior work.
 
 
 # --- HELPER ---
-def combine_research(step_input: StepInput) -> StepOutput:
-    paper = step_input.get_step_content("analyze_paper") or "No paper analysis available."
-    market = step_input.get_step_content("research_market") or "No market research available."
+# def combine_research(step_input: StepInput) -> StepOutput:
+#     paper = step_input.get_step_content("analyze_paper") or "No paper analysis available."
+#     market = step_input.get_step_content("research_market") or "No market research available."
 
-    combined = f"""
-# Combined Research Context
+#     combined = f"""
+# # Combined Research Context
 
-## Paper Analysis
-{paper}
+# ## Paper Analysis
+# {paper}
 
-## Market Research
-{market}
+# ## Market Research
+# {market}
 
-## Next Step
-Generate SaaS ideas that apply the paper's innovations to solve these market problems.
-"""
-    return StepOutput(step_name="combine_research", content=combined, success=True)
+# ## Next Step
+# Generate SaaS ideas that apply the paper's innovations to solve these market problems.
+# """
+#     return StepOutput(step_name="combine_research", content=combined, success=True)
 
 
 # --- WORKFLOW ---
-paper2saas_workflow = Workflow(
-    id="paper2saas",
-    name="Paper2SaaS Discovery Engine",
-    description="Turn any arXiv paper into validated SaaS opportunities",
-    input_schema=Paper2SaaSInput,
-    db=SqliteDb(db_file="tmp/paper2saas.db"),  # ← Sync DB = no async errors
-    steps=[
-        Parallel(
-            Step(name="analyze_paper", agent=paper_analyzer),
-            Step(name="research_market", agent=market_researcher),
-            name="initial_research",
-        ),
-        Step(name="combine_research", executor=combine_research),
-        Step(name="generate_ideas", agent=idea_generator),
-        Step(name="validate_ideas", agent=validation_researcher),
-        Step(name="advise", agent=strategic_advisor),
-        Step(name="generate_report", agent=report_generator),
-    ],
-    store_events=True,
-)
+# paper2saas_workflow = Workflow(
+#     id="paper2saas",
+#     name="Paper2SaaS Discovery Engine",
+#     description="Turn any arXiv paper into validated SaaS opportunities",
+#     input_schema=Paper2SaaSInput,
+#     db=SqliteDb(db_file="tmp/paper2saas.db"),  # ← Sync DB = no async errors
+#     steps=[
+#         Parallel(
+#             Step(name="analyze_paper", agent=paper_analyzer),
+#             Step(name="research_market", agent=market_researcher),
+#             name="initial_research",
+#         ),
+#         Step(name="combine_research", executor=combine_research),
+#         Step(name="generate_ideas", agent=idea_generator),
+#         Step(name="validate_ideas", agent=validation_researcher),
+#         Step(name="advise", agent=strategic_advisor),
+#         Step(name="generate_report", agent=report_generator),
+#     ],
+#     store_events=True,
+# )
 
+# --- PAPER2SAAS TEAM (Main interactive system) ---
 
-# --- MAIN ENTRYPOINT AGENT ---
-# In your workflow_agent instructions, tell it to pass input as JSON string:
-workflow_agent = Agent(
+paper2saas_team = Team(
     name="Paper2SaaS",
-    model="mistral:mistral-large-latest",
-    tools=[WorkflowTools(workflow=paper2saas_workflow, add_instructions=True)],
+    role="Transform cutting-edge arXiv papers into validated, actionable SaaS opportunities",
+    model="mistral:mistral-large-latest",  # Supervisor model
     instructions="""
-You are Paper2SaaS — an AI system that transforms cutting-edge research papers into actionable, validated SaaS business opportunities.
+You are the Supervisor leading a world-class team that turns academic papers into startup opportunities.
 
-When the user provides an arXiv ID, run the 'paper2saas' workflow.
+Team members:
+- PaperAnalyzer
+- MarketResearcher
+- IdeaGenerator
+- ValidationResearcher
+- StrategicAdvisor
+- ReportGenerator
 
-IMPORTANT: Pass input_data as a JSON STRING, like:
-input_data='{"arxiv_id": "2511.13646"}'
+MANDATORY PROCESS — follow this sequence exactly:
 
-Do NOT pass it as a dictionary.
+1. Extract the arXiv ID from the user message (e.g., 2401.00001, 2511.13646, or from a URL).
+
+2. Immediately delegate in parallel:
+   - Give the arXiv ID to PaperAnalyzer → full paper analysis
+   - Instruct MarketResearcher → general AI/ML/SaaS market research (no paper context needed)
+
+3. Once both return, combine results and send to IdeaGenerator → generate and rank 7–10 ideas
+
+4. Send the top 3 ranked ideas to ValidationResearcher → deep validation
+
+5. Send validated ideas to StrategicAdvisor → SWOT + recommendation
+
+6. Finally, send ALL collected information to ReportGenerator → produce final executive report
+
+RULES:
+- Always delegate — never do a member's job yourself
+- Only output the final ReportGenerator response to the user
+- If paper not found → report clearly and stop
+- Be concise in delegation messages
+- Use clean markdown
 """,
-    markdown=True,
+    members=[
+        paper_analyzer,
+        market_researcher,
+        idea_generator,
+        validation_researcher,
+        strategic_advisor,
+        report_generator,
+    ],
+    markdown=True, 
 )
