@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Edit(**)",
+      "Bash(cd /home/ash_blanc/src/paper2saas && uv run python -c \"import paper2saas; print('✓ paper2saas module loaded successfully')\")",
+      "Bash(cd /home/ash_blanc/src/paper2saas && uv run python -c \"import my_os; print('✓ my_os module loaded successfully')\")",
+      "Bash(git status:*)",
+      "Bash(git add:*)",
+      "Bash(cd /home/ash_blanc/src/paper2saas && time uv run python -c \"import paper2saas; print('✓ loaded')\")",
+      "Bash(grep:*)"
+    ]
+  }
+}

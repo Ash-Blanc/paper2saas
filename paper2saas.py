@@ -17,16 +17,21 @@ from agno.tools.baidusearch import BaiduSearchTools
 
 load_dotenv()
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.StreamHandler(),
-        logging.FileHandler('tmp/paper2saas.log')
-    ]
-)
-logger = logging.getLogger(__name__)
+# Configure logging (only if enabled)
+if os.getenv("ENABLE_LOGGING", "false").lower() == "true":
+    log_handlers = [logging.StreamHandler()]
+    if os.getenv("LOG_TO_FILE", "false").lower() == "true":
+        log_handlers.append(logging.FileHandler('tmp/paper2saas.log'))
+    
+    logging.basicConfig(
+        level=getattr(logging, os.getenv("LOG_LEVEL", "INFO")),
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        handlers=log_handlers
+    )
+    logger = logging.getLogger(__name__)
+else:
+    logger = logging.getLogger(__name__)
+    logger.addHandler(logging.NullHandler())
 
 # Environment setup
 os.environ["FIRECRAWL_API_KEY"] = os.getenv("FIRECRAWL_API_KEY", "")
@@ -34,7 +39,6 @@ os.environ["MISTRAL_API_KEY"] = os.getenv("MISTRAL_API_KEY")
 
 # Shared DB for persistence and context sharing
 shared_db = SqliteDb(db_file="tmp/paper2saas.db")
-logger.info(f"Initialized database at tmp/paper2saas.db")
 
 
 # --- CONFIGURATION ---
@@ -53,11 +57,6 @@ class AgentConfig:
     ENABLE_MARKDOWN = os.getenv("ENABLE_MARKDOWN", "true").lower() == "true"
     STORE_EVENTS = os.getenv("STORE_EVENTS", "true").lower() == "true"
     SHOW_MEMBER_RESPONSES = os.getenv("SHOW_MEMBER_RESPONSES", "true").lower() == "true"
-    
-    # Logging
-    LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
-
-logger.info(f"Loaded configuration: LARGE_MODEL={AgentConfig.LARGE_MODEL}, SMALL_MODEL={AgentConfig.SMALL_MODEL}")
 
 
 # --- STRUCTURED OUTPUT MODELS ---
@@ -961,6 +960,3 @@ def run_idea_roaster_with_error_handling(idea_context: str) -> dict:
             "error": str(e),
             "error_type": type(e).__name__
         }
-
-
-logger.info("Paper2SaaS system initialized successfully")

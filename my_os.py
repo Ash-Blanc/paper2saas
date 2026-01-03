@@ -8,11 +8,12 @@ from paper2saas import (
     strategic_advisor,
     report_generator,
     paper2saas_team,
+    idea_roaster_team,  # New roast team
 )
 
 paper2saas_os = AgentOS(
     name="paper2saas-os",
-    description="Transforms academic papers into validated SaaS opportunities",
+    description="Turns academic papers into battle-tested SaaS opportunities",
     agents=[
         paper_analyzer,
         market_researcher,
@@ -21,7 +22,10 @@ paper2saas_os = AgentOS(
         strategic_advisor,
         report_generator,
     ],
-    teams=[paper2saas_team],
+    teams=[
+        paper2saas_team,     # Main flow
+        idea_roaster_team,   # Brutal critique
+    ],
 )
 
 app = paper2saas_os.get_app()
