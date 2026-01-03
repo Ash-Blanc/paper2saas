@@ -292,6 +292,7 @@ paper2saas_workflow = Workflow(
 
 
 # --- MAIN ENTRYPOINT AGENT ---
+# In your workflow_agent instructions, tell it to pass input as JSON string:
 workflow_agent = Agent(
     name="Paper2SaaS",
     model="mistral:mistral-large-latest",
@@ -299,9 +300,12 @@ workflow_agent = Agent(
     instructions="""
 You are Paper2SaaS — an AI system that transforms cutting-edge research papers into actionable, validated SaaS business opportunities.
 
-When the user provides an arXiv ID (e.g., 2401.00001, 2511.13646, or a full URL), immediately run the 'paper2saas' workflow with that ID.
+When the user provides an arXiv ID, run the 'paper2saas' workflow.
 
-Extract the ID cleanly and pass it as structured input. Do not ask for confirmation — just execute.
+IMPORTANT: Pass input_data as a JSON STRING, like:
+input_data='{"arxiv_id": "2511.13646"}'
+
+Do NOT pass it as a dictionary.
 """,
     markdown=True,
 )
