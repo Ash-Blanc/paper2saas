@@ -10,7 +10,8 @@ Paper2SaaS uses a team of specialized AI agents to:
 3. Generate SaaS ideas based on paper innovations
 4. Validate ideas with market research
 5. Provide strategic recommendations
-6. Produce comprehensive opportunity reports
+6. Create technical implementation plans (GitHub repos, architecture, MVP timeline)
+7. Produce comprehensive opportunity reports
 
 ## Tech Stack
 
@@ -26,20 +27,21 @@ Paper2SaaS uses a team of specialized AI agents to:
 - **Language**: TypeScript
 - **Styling**: TailwindCSS, Shadcn UI
 - **State Management**: Zustand
-- **Runtime**: Bun
+- **Runtime**: Bun (or Node/pnpm)
 
 ## Architecture
 
-### Main Team: paper2saas_team (7 agents)
+### Main Team: paper2saas_team (8 agents)
 
-Sequential workflow:
+Sequential workflow with parallel execution phases:
 1. **PaperAnalyzer** - Fetches and analyzes arXiv papers with fallback protocol
 2. **MarketResearcher** - Conducts tool-based market research
 3. **IdeaGenerator** - Creates SaaS ideas from verified inputs
-4. **ValidationResearcher** - Validates top ideas with external research
-5. **StrategicAdvisor** - Evaluates and scores ideas
-6. **FactChecker** - Verifies claims against sources
-7. **ReportGenerator** - Compiles comprehensive final report
+4. **ValidationResearcher** (Parallel) - Validates top ideas with external research
+5. **ProductEngineer** (Parallel) - Finds GitHub repos and creates technical implementation plans
+6. **StrategicAdvisor** - Evaluates and scores ideas based on validation and technical feasibility
+7. **FactChecker** - Verifies claims against sources
+8. **ReportGenerator** - Compiles comprehensive final report
 
 ### Critique Team: idea_roaster_team (2 agents)
 
@@ -53,6 +55,7 @@ A modern, reactive web interface built with Next.js that provides:
 - Artifact rendering (Reports, Code, Markdown)
 - Theme support (Light/Dark/System)
 - Session management
+- **Robust Error Handling**: UI components wrapped in Error Boundaries for stability
 
 ## Key Features
 
@@ -79,18 +82,19 @@ A modern, reactive web interface built with Next.js that provides:
 git clone <repo-url>
 cd paper2saas
 
-# Install dependencies
+# Install Backend dependencies
 uv sync
 
 # Configure environment
 cp .env.example .env
-# Edit .env with your API keys
+# Edit .env with your API keys (MISTRAL_API_KEY, FIRECRAWL_API_KEY)
 
 # Install Frontend dependencies
 cd agent-ui
 bun install
+# or if using pnpm
+# pnpm install
 cd ..
-
 ```
 
 ### Environment Variables
@@ -99,9 +103,14 @@ Required:
 - `MISTRAL_API_KEY` - Your Mistral AI API key
 - `FIRECRAWL_API_KEY` - Your Firecrawl API key
 
-Optional:
+Optional (Model Overrides):
 - `LARGE_MODEL` - Default: mistral:mistral-large-latest
 - `SMALL_MODEL` - Default: mistral:mistral-small-latest
+- `PRODUCT_ENGINEER_MODEL` - Specific override for Product Engineer
+- `VALIDATION_RESEARCHER_MODEL` - Specific override for Validation Researcher
+- ... (see `paper2saas_app/config.py` for full list)
+
+Configuration:
 - `REASONING_MIN_STEPS` - Default: 2
 - `REASONING_MAX_STEPS` - Default: 8
 - `ENABLE_MARKDOWN` - Default: true
@@ -125,7 +134,7 @@ cd agent-ui
 bun dev
 ```
 
-- Backend API: `http://localhost:8000`
+- Backend API: `http://localhost:8000` (or `http://localhost:7777` depending on Agno config)
 - Frontend UI: `http://localhost:3000`
 
 ### API Endpoints
@@ -155,15 +164,22 @@ print(response.json())
 
 ```
 paper2saas/
-├── paper2saas.py      # Main agent definitions and teams
-├── my_os.py           # AgentOS setup and FastAPI app
-├── pyproject.toml     # Dependencies
-├── .env               # Environment variables (not in git)
+├── paper2saas_app/        # Modular Application Package
+│   ├── agents/            # Individual Agent Definitions
+│   ├── teams/             # Team Orchestration Logic
+│   ├── prompts/           # Agent Instructions & Prompts
+│   ├── config.py          # Configuration & Settings
+│   ├── models.py          # Pydantic Data Models
+│   └── utils.py           # Shared Utilities
+├── paper2saas.py          # Legacy Facade (Backward Compatibility)
+├── my_os.py               # AgentOS setup and FastAPI app
+├── pyproject.toml         # Python Dependencies
+├── .env                   # Environment variables (not in git)
 ├── tmp/
-│   ├── paper2saas.db  # SQLite event storage
-│   └── paper2saas.log # Application logs
-├── agent-ui/          # Next.js Frontend application
-├── ARTIFACTS_GUIDE.md # Documentation for UI Artifacts
+│   ├── paper2saas.db      # SQLite event storage
+│   └── paper2saas.log     # Application logs
+├── agent-ui/              # Next.js Frontend application
+├── ARTIFACTS_GUIDE.md     # Documentation for UI Artifacts
 └── README.md
 ```
 
@@ -186,10 +202,11 @@ Agent events are stored in `tmp/paper2saas.db` for:
 
 ### Adding New Agents
 
-1. Define Pydantic output schema
-2. Create Agent with tools and instructions
-3. Add to appropriate team
-4. Update team workflow in instructions
+1. Define Pydantic output schema in `paper2saas_app/models.py`
+2. Add instructions to `paper2saas_app/prompts/agents.py`
+3. Create Agent definition in `paper2saas_app/agents/`
+4. Register agent in `paper2saas_app/teams/paper2saas.py`
+5. Update `AgentConfig` in `paper2saas_app/config.py` if new model settings are needed
 
 ## Methodology
 
@@ -225,6 +242,10 @@ Agent events are stored in `tmp/paper2saas.db` for:
 - Verify arXiv ID is correct
 - Check if paper is accessible
 - Review logs in `tmp/paper2saas.log`
+
+**UI Rendering Error**
+- If a message displays "Rendering Error", the content likely contained malformed markdown.
+- Check the console for details. The app will remain stable thanks to Error Boundaries.
 
 ## Contributing
 
