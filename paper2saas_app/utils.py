@@ -27,7 +27,7 @@ def validate_arxiv_id(arxiv_id: str) -> bool:
     pattern = r'^\d{4}\.\d{4,5}(v\d+)?$'
     return bool(re.match(pattern, arxiv_id))
 
-def run_team_with_error_handling(team, input_text: str, log_start_msg: str, log_success_msg: str) -> dict:
+def run_team_with_error_handling(team, input_text: str, log_start_msg: str, log_success_msg: str, session_id: str = None) -> dict:
     """
     Generic wrapper for executing a team with error handling.
     
@@ -36,6 +36,7 @@ def run_team_with_error_handling(team, input_text: str, log_start_msg: str, log_
         input_text: The input prompt for the team
         log_start_msg: Message to log at start
         log_success_msg: Message to log on success
+        session_id: Optional session ID to ensure isolation
         
     Returns:
         dict with status, result/error
@@ -43,7 +44,9 @@ def run_team_with_error_handling(team, input_text: str, log_start_msg: str, log_
     logger.info(log_start_msg)
     
     try:
-        result = team.run(input_text)
+        # Pass session_id if provided
+        kwargs = {"session_id": session_id} if session_id else {}
+        result = team.run(input_text, **kwargs)
         logger.info(log_success_msg)
         return {
             "status": "success",

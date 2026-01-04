@@ -1,4 +1,5 @@
 from agno.team import Team
+import uuid
 
 from paper2saas_app.config import AgentConfig
 from paper2saas_app.utils import shared_db, logger, run_team_with_error_handling, validate_arxiv_id
@@ -15,7 +16,7 @@ from paper2saas_app.agents.product_engineer import product_engineer
 from paper2saas_app.agents.report_generator import report_generator
 
 paper2saas_team = Team(
-    name="Paper2SaaS",
+    name="Brainstormer",
     role="Transform arXiv papers into validated SaaS opportunities with evidence-based analysis",
     model="mistral:mistral-large-latest",
     stream_intermediate_steps=False,
@@ -57,13 +58,19 @@ def run_paper2saas(arxiv_id: str) -> dict:
             "arxiv_id": arxiv_id
         }
     
+    # Generate a unique session ID for this run to prevent context pollution
+    session_id = str(uuid.uuid4())
+    logger.info(f"Generated session ID: {session_id} for arXiv ID: {arxiv_id}")
+    
     result = run_team_with_error_handling(
         team=paper2saas_team,
         input_text=f"Analyze arXiv paper {arxiv_id} and generate SaaS opportunities",
         log_start_msg=f"Starting paper2saas analysis for arXiv ID: {arxiv_id}",
-        log_success_msg=f"Successfully completed analysis for {arxiv_id}"
+        log_success_msg=f"Successfully completed analysis for {arxiv_id}",
+        session_id=session_id
     )
     
     # Add arxiv_id to result
     result["arxiv_id"] = arxiv_id
+    result["session_id"] = session_id
     return result

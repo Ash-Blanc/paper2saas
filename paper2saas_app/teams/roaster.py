@@ -1,4 +1,5 @@
 from agno.team import Team
+import uuid
 
 from paper2saas_app.config import AgentConfig
 from paper2saas_app.utils import shared_db, logger, run_team_with_error_handling
@@ -34,9 +35,13 @@ def run_idea_roaster(idea_context: str) -> dict:
     Returns:
         dict with status, result/error
     """
+    session_id = str(uuid.uuid4())
+    logger.info(f"Starting idea roaster critique with session ID: {session_id}")
+
     return run_team_with_error_handling(
         team=idea_roaster_team,
         input_text=f"Critique this SaaS idea: {idea_context}",
         log_start_msg="Starting idea roaster critique",
-        log_success_msg="Successfully completed idea critique"
+        log_success_msg="Successfully completed idea critique",
+        session_id=session_id
     )
