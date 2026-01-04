@@ -14,6 +14,7 @@ import React, { type FC } from 'react'
 
 import Icon from '@/components/ui/icon'
 import ChatBlankState from './ChatBlankState'
+import ErrorBoundary from '@/components/ui/ErrorBoundary'
 
 interface MessageListProps {
   messages: ChatMessage[]
@@ -164,14 +165,19 @@ const Messages = ({ messages }: MessageListProps) => {
 
         if (message.role === 'agent') {
           return (
-            <AgentMessageWrapper
-              key={key}
-              message={message}
-              isLastMessage={isLastMessage}
-            />
+            <ErrorBoundary key={key}>
+              <AgentMessageWrapper
+                message={message}
+                isLastMessage={isLastMessage}
+              />
+            </ErrorBoundary>
           )
         }
-        return <UserMessage key={key} message={message} />
+        return (
+          <ErrorBoundary key={key}>
+            <UserMessage message={message} />
+          </ErrorBoundary>
+        )
       })}
     </>
   )
