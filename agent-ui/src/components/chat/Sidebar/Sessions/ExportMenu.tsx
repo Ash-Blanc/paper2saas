@@ -108,43 +108,68 @@ const ExportMenu = ({ sessionId, sessionName }: ExportMenuProps) => {
         <Button
           variant="ghost"
           size="icon"
-          className="transform opacity-0 transition-all duration-200 ease-in-out group-hover:opacity-100"
+          className="h-8 w-8 transform opacity-0 transition-all duration-200 ease-in-out hover:bg-accent/50 group-hover:opacity-100"
           onClick={(e) => e.stopPropagation()}
         >
           <Icon type="share" size="xs" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuItem onClick={handleCopyShareLink}>
-          <Icon type="link" size="xs" className="mr-2" />
-          Copy share link
+      <DropdownMenuContent align="end" className="w-56 font-dmmono">
+        <DropdownMenuItem 
+          onClick={handleCopyShareLink}
+          className="cursor-pointer rounded-xl py-2.5 transition-colors hover:bg-accent/80"
+        >
+          <Icon type="link" size="xs" className="mr-3" />
+          <span className="text-xs font-medium uppercase">Copy share link</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleCopyMessages}>
-          <Icon type="clipboard" size="xs" className="mr-2" />
-          Copy to clipboard
+        <DropdownMenuItem 
+          onClick={handleCopyMessages}
+          className="cursor-pointer rounded-xl py-2.5 transition-colors hover:bg-accent/80"
+        >
+          <Icon type="clipboard" size="xs" className="mr-3" />
+          <span className="text-xs font-medium uppercase">Copy to clipboard</span>
         </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleExportMarkdown}>
-          <Icon type="download" size="xs" className="mr-2" />
-          Export as Markdown
+        <DropdownMenuSeparator className="my-1" />
+        <DropdownMenuItem 
+          onClick={handleExportMarkdown}
+          className="cursor-pointer rounded-xl py-2.5 transition-colors hover:bg-accent/80"
+        >
+          <Icon type="download" size="xs" className="mr-3" />
+          <span className="text-xs font-medium uppercase">Export as Markdown</span>
         </DropdownMenuItem>
         <DropdownMenuSub>
-          <DropdownMenuSubTrigger>
-            <Icon type="sparkles" size="xs" className="mr-2" />
-            Export for LLM
+          <DropdownMenuSubTrigger className="cursor-pointer rounded-xl py-2.5 transition-colors hover:bg-accent/80">
+            <Icon type="sparkles" size="xs" className="mr-3" />
+            <span className="text-xs font-medium uppercase">Export for LLM</span>
           </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            <DropdownMenuItem onClick={() => handleExportPrompts('claude')}>
-              Claude (Anthropic)
+          <DropdownMenuSubContent className="font-dmmono">
+            <DropdownMenuItem 
+              onClick={() => handleExportPrompts('claude')}
+              className="cursor-pointer rounded-xl py-2.5 transition-colors hover:bg-accent/80"
+            >
+              <Icon type="anthropic" size="xs" className="mr-3" />
+              <span className="text-xs font-medium uppercase">Claude</span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleExportPrompts('openai')}>
-              ChatGPT (OpenAI)
+            <DropdownMenuItem 
+              onClick={() => handleExportPrompts('openai')}
+              className="cursor-pointer rounded-xl py-2.5 transition-colors hover:bg-accent/80"
+            >
+              <Icon type="open-ai" size="xs" className="mr-3" />
+              <span className="text-xs font-medium uppercase">ChatGPT</span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleExportPrompts('gemini')}>
-              Gemini (Google)
+            <DropdownMenuItem 
+              onClick={() => handleExportPrompts('gemini')}
+              className="cursor-pointer rounded-xl py-2.5 transition-colors hover:bg-accent/80"
+            >
+              <Icon type="gemini" size="xs" className="mr-3" />
+              <span className="text-xs font-medium uppercase">Gemini</span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleExportPrompts('mistral')}>
-              Mistral AI
+            <DropdownMenuItem 
+              onClick={() => handleExportPrompts('mistral')}
+              className="cursor-pointer rounded-xl py-2.5 transition-colors hover:bg-accent/80"
+            >
+              <Icon type="mistral" size="xs" className="mr-3" />
+              <span className="text-xs font-medium uppercase">Mistral AI</span>
             </DropdownMenuItem>
           </DropdownMenuSubContent>
         </DropdownMenuSub>

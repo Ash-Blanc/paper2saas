@@ -12,6 +12,7 @@ import {
   OllamaLogo,
   XaiLogo,
   AgnoIcon,
+  P2SIcon,
   UserIcon,
   AgentIcon,
   SheetIcon,
@@ -39,7 +40,8 @@ import {
   Share2,
   Link,
   Clipboard,
-  Sparkles
+  Sparkles,
+  Github
 } from 'lucide-react'
 
 import { PlusIcon } from '@radix-ui/react-icons'
@@ -58,6 +60,8 @@ export const ICONS: IconTypeMap = {
   ollama: OllamaLogo,
   xai: XaiLogo,
   agno: AgnoIcon,
+  p2s: P2SIcon,
+  github: Github,
   user: UserIcon,
   agent: AgentIcon,
   sheet: SheetIcon,

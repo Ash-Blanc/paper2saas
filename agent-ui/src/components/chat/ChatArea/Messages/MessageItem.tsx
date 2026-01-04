@@ -1,3 +1,4 @@
+import { memo, useEffect } from 'react'
 import Icon from '@/components/ui/icon'
 import MarkdownRenderer from '@/components/ui/typography/MarkdownRenderer'
 import { useStore } from '@/store'
@@ -5,15 +6,37 @@ import type { ChatMessage } from '@/types/os'
 import Videos from './Multimedia/Videos'
 import Images from './Multimedia/Images'
 import Audios from './Multimedia/Audios'
-import { memo } from 'react'
 import AgentThinkingLoader from './AgentThinkingLoader'
+import { detectArtifact } from '@/lib/artifactDetection'
+import { Button } from '@/components/ui/button'
 
 interface MessageProps {
   message: ChatMessage
 }
 
 const AgentMessage = ({ message }: MessageProps) => {
-  const { streamingErrorMessage } = useStore()
+  const { streamingErrorMessage, setCurrentArtifact, setArtifactPanelOpen } = useStore()
+  
+  // Detect artifacts in message content
+  const artifactResult = message.content 
+    ? detectArtifact(message.content, `${message.created_at}`)
+    : { hasArtifact: false, cleanedContent: message.content || '' }
+
+  // Auto-open artifact panel for detected artifacts
+  useEffect(() => {
+    if (artifactResult.hasArtifact && artifactResult.artifact) {
+      setCurrentArtifact(artifactResult.artifact)
+      setArtifactPanelOpen(true)
+    }
+  }, [artifactResult.hasArtifact, artifactResult.artifact, setCurrentArtifact, setArtifactPanelOpen])
+
+  const handleViewArtifact = () => {
+    if (artifactResult.artifact) {
+      setCurrentArtifact(artifactResult.artifact)
+      setArtifactPanelOpen(true)
+    }
+  }
+
   let messageContent
   if (message.streamingError) {
     messageContent = (
@@ -27,9 +50,34 @@ const AgentMessage = ({ message }: MessageProps) => {
       </p>
     )
   } else if (message.content) {
+    const contentToDisplay = artifactResult.cleanedContent || message.content
+    
     messageContent = (
       <div className="flex w-full flex-col gap-4">
-        <MarkdownRenderer>{message.content}</MarkdownRenderer>
+        {artifactResult.hasArtifact && artifactResult.artifact && (
+          <div className="flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/5 p-3">
+            <Icon type="sparkles" size="xs" className="text-primary" />
+            <div className="flex-1">
+              <p className="text-xs font-medium text-primary">
+                {artifactResult.artifact.title}
+              </p>
+              <p className="text-xs text-muted">
+                {artifactResult.artifact.type} artifact
+              </p>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleViewArtifact}
+              className="text-xs"
+            >
+              View
+            </Button>
+          </div>
+        )}
+        {contentToDisplay && (
+          <MarkdownRenderer>{contentToDisplay}</MarkdownRenderer>
+        )}
         {message.videos && message.videos.length > 0 && (
           <Videos videos={message.videos} />
         )}

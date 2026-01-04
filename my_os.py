@@ -7,12 +7,16 @@ from paper2saas import (
     validation_researcher,
     strategic_advisor,
     report_generator,
+    product_engineer,
+    fact_checker,
+    devils_advocate,
+    market_skeptic,
     paper2saas_team,
-    idea_roaster_team,  # New roast team
+    idea_roaster_team,
 )
 
-paper2saas_os = AgentOS(
-    name="paper2saas-os",
+p2s_os = AgentOS(
+    name="p2s-os",
     description="Turns academic papers into battle-tested SaaS opportunities",
     agents=[
         paper_analyzer,
@@ -21,14 +25,19 @@ paper2saas_os = AgentOS(
         validation_researcher,
         strategic_advisor,
         report_generator,
+        product_engineer,
+        fact_checker,
+        devils_advocate,
+        market_skeptic
     ],
     teams=[
         paper2saas_team,     # Main flow
         idea_roaster_team,   # Brutal critique
     ],
+    tracing=False,
 )
 
-app = paper2saas_os.get_app()
+app = p2s_os.get_app()
 
 if __name__ == "__main__":
-    paper2saas_os.serve(app="__main__:app", reload=True)
+    p2s_os.serve(app="__main__:app", reload=True)

@@ -7,6 +7,7 @@ import {
   TeamDetails,
   type ChatMessage
 } from '@/types/os'
+import type { Artifact } from '@/types/artifacts'
 
 interface Store {
   hydrated: boolean
@@ -54,6 +55,10 @@ interface Store {
   ) => void
   isSessionsLoading: boolean
   setIsSessionsLoading: (isSessionsLoading: boolean) => void
+  currentArtifact: Artifact | null
+  setCurrentArtifact: (artifact: Artifact | null) => void
+  artifactPanelOpen: boolean
+  setArtifactPanelOpen: (isOpen: boolean) => void
 }
 
 export const useStore = create<Store>()(
@@ -104,7 +109,11 @@ export const useStore = create<Store>()(
         })),
       isSessionsLoading: false,
       setIsSessionsLoading: (isSessionsLoading) =>
-        set(() => ({ isSessionsLoading }))
+        set(() => ({ isSessionsLoading })),
+      currentArtifact: null,
+      setCurrentArtifact: (artifact) => set({ currentArtifact: artifact }),
+      artifactPanelOpen: false,
+      setArtifactPanelOpen: (isOpen) => set({ artifactPanelOpen: isOpen })
     }),
     {
       name: 'endpoint-storage',

@@ -13,6 +13,7 @@ export type IconType =
   | 'ollama'
   | 'xai'
   | 'agno'
+  | 'p2s'
   | 'user'
   | 'agent'
   | 'open-ai'
@@ -40,6 +41,7 @@ export type IconType =
   | 'link'
   | 'clipboard'
   | 'sparkles'
+  | 'github'
 
 export interface IconProps {
   type: IconType
