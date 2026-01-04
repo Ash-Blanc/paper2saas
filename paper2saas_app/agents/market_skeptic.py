@@ -5,11 +5,12 @@ from agno.tools.baidusearch import BaiduSearchTools
 from agno.tools.firecrawl import FirecrawlTools
 
 from paper2saas_app.config import AgentConfig
+from paper2saas_app.models_config import get_model, get_large_model
 from paper2saas_app.prompts.agents import MARKET_SKEPTIC_INSTRUCTIONS
 
 market_skeptic = Agent(
     name="MarketSkeptic",
-    model=AgentConfig.MARKET_SKEPTIC_MODEL,
+    model=get_model(AgentConfig.MARKET_SKEPTIC_MODEL, get_large_model),
     tools=[
         HackerNewsTools(),
         WebsiteTools(),

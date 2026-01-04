@@ -4,11 +4,12 @@ from agno.tools.firecrawl import FirecrawlTools
 from agno.tools.website import WebsiteTools
 
 from paper2saas_app.config import AgentConfig
+from paper2saas_app.models_config import get_model, get_large_model
 from paper2saas_app.prompts.agents import DEVILS_ADVOCATE_INSTRUCTIONS
 
 devils_advocate = Agent(
     name="DevilsAdvocate",
-    model=AgentConfig.DEVILS_ADVOCATE_MODEL,
+    model=get_model(AgentConfig.DEVILS_ADVOCATE_MODEL, get_large_model),
     tools=[
         ReasoningTools(add_instructions=True),
         FirecrawlTools(enable_search=True, enable_scrape=True),

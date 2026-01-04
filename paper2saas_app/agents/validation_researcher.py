@@ -5,11 +5,12 @@ from agno.tools.website import WebsiteTools
 from agno.tools.baidusearch import BaiduSearchTools
 
 from paper2saas_app.config import AgentConfig
+from paper2saas_app.models_config import get_model, get_large_model
 from paper2saas_app.prompts.agents import VALIDATION_RESEARCHER_INSTRUCTIONS
 
 validation_researcher = Agent(
     name="ValidationResearcher",
-    model=AgentConfig.VALIDATION_RESEARCHER_MODEL,
+    model=get_model(AgentConfig.VALIDATION_RESEARCHER_MODEL, get_large_model),
     tools=[
         FirecrawlTools(enable_search=True, enable_scrape=True),
         HackerNewsTools(),
