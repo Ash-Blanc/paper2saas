@@ -13,6 +13,7 @@ from .agents.market_skeptic import market_skeptic
 
 from .teams.paper2saas import paper2saas_team
 from .teams.roaster import idea_roaster_team
+from .config import AgentConfig
 
 p2s_os = AgentOS(
     name="p2s-os",
@@ -33,6 +34,7 @@ p2s_os = AgentOS(
         paper2saas_team,     # Main flow
         idea_roaster_team,   # Brutal critique
     ],
+    debug_mode=AgentConfig.DEBUG_MODE,
     tracing=False,
 )
 

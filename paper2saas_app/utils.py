@@ -1,6 +1,12 @@
 import os
 import logging
+import warnings
 from agno.db.sqlite import SqliteDb
+from agno.models.mistral import MistralChat
+
+# Suppress annoying OpenAI API key warnings
+# These occur because Agno might auto-initialize OpenAI client even when using Mistral
+warnings.filterwarnings("ignore", message="The api_key client option must be set")
 
 # Configure logging (only if enabled)
 if os.getenv("ENABLE_LOGGING", "false").lower() == "true":
@@ -20,6 +26,12 @@ else:
 
 # Shared DB for persistence and context sharing
 shared_db = SqliteDb(db_file="tmp/paper2saas.db")
+
+def get_mistral_model(model_id: str):
+    """Returns a MistralChat model instance with the given ID."""
+    # Strip provider prefix if present (e.g. "mistral:mistral-large-latest" -> "mistral-large-latest")
+    clean_id = model_id.split(":")[-1] if ":" in model_id else model_id
+    return MistralChat(id=clean_id)
 
 def validate_arxiv_id(arxiv_id: str) -> bool:
     """Validate arXiv ID format"""

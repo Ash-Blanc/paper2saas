@@ -29,3 +29,4 @@ class AgentConfig:
     ENABLE_MARKDOWN = os.getenv("ENABLE_MARKDOWN", "true").lower() == "true"
     STORE_EVENTS = os.getenv("STORE_EVENTS", "true").lower() == "true"
     SHOW_MEMBER_RESPONSES = os.getenv("SHOW_MEMBER_RESPONSES", "true").lower() == "true"
+    DEBUG_MODE = os.getenv("DEBUG_MODE", "false").lower() == "true"

@@ -2,7 +2,7 @@ from agno.team import Team
 import uuid
 
 from paper2saas_app.config import AgentConfig
-from paper2saas_app.utils import shared_db, logger, run_team_with_error_handling, validate_arxiv_id
+from paper2saas_app.utils import shared_db, logger, run_team_with_error_handling, validate_arxiv_id, get_mistral_model
 from paper2saas_app.prompts.agents import PAPER2SAAS_TEAM_INSTRUCTIONS
 
 # Import agents
@@ -16,9 +16,9 @@ from paper2saas_app.agents.product_engineer import product_engineer
 from paper2saas_app.agents.report_generator import report_generator
 
 paper2saas_team = Team(
-    name="Brainstormer",
+    name="Paper2SaaS",
     role="Transform arXiv papers into validated SaaS opportunities with evidence-based analysis",
-    model="mistral:mistral-large-latest",
+    model=get_mistral_model(AgentConfig.LARGE_MODEL),
     stream_intermediate_steps=False,
     instructions=PAPER2SAAS_TEAM_INSTRUCTIONS,
     members=[
@@ -36,6 +36,7 @@ paper2saas_team = Team(
     markdown=AgentConfig.ENABLE_MARKDOWN,
     show_members_responses=AgentConfig.SHOW_MEMBER_RESPONSES,
     add_datetime_to_context=True,
+    debug_mode=AgentConfig.DEBUG_MODE,
 )
 logger.info("Initialized paper2saas_team with 8 agents (including ProductEngineer)")
 

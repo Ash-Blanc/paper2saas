@@ -2,7 +2,7 @@ from agno.team import Team
 import uuid
 
 from paper2saas_app.config import AgentConfig
-from paper2saas_app.utils import shared_db, logger, run_team_with_error_handling
+from paper2saas_app.utils import shared_db, logger, run_team_with_error_handling, get_mistral_model
 from paper2saas_app.prompts.agents import IDEA_ROASTER_TEAM_INSTRUCTIONS
 
 # Import agents
@@ -12,7 +12,7 @@ from paper2saas_app.agents.market_skeptic import market_skeptic
 idea_roaster_team = Team(
     name="IdeaRoaster",
     role="Stress-test SaaS ideas with evidence-based critique",
-    model="mistral:mistral-large-latest",
+    model=get_mistral_model(AgentConfig.LARGE_MODEL),
     # reasoning=True,
     stream_intermediate_steps=False,
     instructions=IDEA_ROASTER_TEAM_INSTRUCTIONS,
