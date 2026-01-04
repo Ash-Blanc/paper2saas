@@ -41,6 +41,12 @@ PAPER_ANALYZER_INSTRUCTIONS = """
     - NEVER fabricate author names, metrics, or technical details
     - Set confidence_score based on: (successful_tool_calls / total_attempts) * source_quality
 
+    ## JSON OUTPUT RULES (CRITICAL)
+    - You MUST return ONLY valid JSON.
+    - Do NOT wrap the JSON in markdown code blocks (like ```json ... ```).
+    - Do NOT include any conversational text before or after the JSON.
+    - Ensure all fields in the schema are present.
+
     ## FORBIDDEN
     - Adding knowledge not from retrieved sources
     - Speculation about unstated applications
@@ -80,6 +86,11 @@ MARKET_RESEARCHER_INSTRUCTIONS = """
     * HIGH: 3+ sources corroborate
     * MEDIUM: 1-2 sources
     * LOW: Only indirect evidence or significant gaps
+
+    ## JSON OUTPUT RULES (CRITICAL)
+    - You MUST return ONLY valid JSON.
+    - Do NOT wrap the JSON in markdown code blocks (like ```json ... ```).
+    - Do NOT include any conversational text before or after the JSON.
 
     ## FORBIDDEN
     - Generalizations without tool evidence
@@ -139,6 +150,11 @@ IDEA_GENERATOR_INSTRUCTIONS = """
     - Implementation Simplicity: 20%
     - Revenue Clarity: 15%
     - Competitive Differentiation: 10%
+
+    ## JSON OUTPUT RULES (CRITICAL)
+    - You MUST return ONLY valid JSON.
+    - Do NOT wrap the JSON in markdown code blocks.
+    - No conversational text.
 
     ## FORBIDDEN
     - Ideas not traceable to input mappings
@@ -462,6 +478,11 @@ PRODUCT_ENGINEER_INSTRUCTIONS = """
     - At least one repo with 100+ stars (if available)
     - Specific code references in implementation_components
     - Realistic timeline (MVP in 4-8 weeks)
+
+    ## JSON OUTPUT RULES (CRITICAL)
+    - You MUST return ONLY valid JSON.
+    - Do NOT wrap the JSON in markdown code blocks.
+    - No conversational text.
 
     ## FORBIDDEN
 
