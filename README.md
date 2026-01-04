@@ -21,6 +21,13 @@ Paper2SaaS uses a team of specialized AI agents to:
 - **Database**: SQLite (agent event persistence)
 - **Tools**: ArxivTools, FirecrawlTools, WebsiteTools, BaiduSearchTools, HackerNewsTools
 
+### Frontend (Agent UI)
+- **Framework**: Next.js 15
+- **Language**: TypeScript
+- **Styling**: TailwindCSS, Shadcn UI
+- **State Management**: Zustand
+- **Runtime**: Bun
+
 ## Architecture
 
 ### Main Team: paper2saas_team (7 agents)
@@ -40,6 +47,13 @@ Parallel critique for stress-testing:
 - **DevilsAdvocate** - Technical critique with tool-verified evidence
 - **MarketSkeptic** - Market assumptions challenge
 
+### Frontend: Agent UI
+A modern, reactive web interface built with Next.js that provides:
+- Real-time streaming of agent activities
+- Artifact rendering (Reports, Code, Markdown)
+- Theme support (Light/Dark/System)
+- Session management
+
 ## Key Features
 
 - **Structured Outputs**: Pydantic models prevent hallucination
@@ -48,13 +62,15 @@ Parallel critique for stress-testing:
 - **Multi-Tool Fallback**: ArxivTools → FirecrawlTools → WebsiteTools → BaiduSearchTools
 - **Reasoning**: All agents have configurable reasoning steps
 - **Event Persistence**: SQLite storage for debugging and analysis
+- **Rich Agent UI**: Interactive chat interface with Claude-style [Artifacts support](ARTIFACTS_GUIDE.md)
 
 ## Setup
 
 ### Prerequisites
 
 - Python 3.12+
-- [uv](https://github.com/astral-sh/uv) package manager
+- [uv](https://github.com/astral-sh/uv) package manager (Backend)
+- [Bun](https://bun.sh) runtime (Frontend)
 
 ### Installation
 
@@ -69,6 +85,12 @@ uv sync
 # Configure environment
 cp .env.example .env
 # Edit .env with your API keys
+
+# Install Frontend dependencies
+cd agent-ui
+bun install
+cd ..
+
 ```
 
 ### Environment Variables
@@ -89,17 +111,22 @@ Optional:
 
 ## Usage
 
-### Start the API Server
+### 1. Start the Backend (API)
 
 ```bash
-# Development mode with auto-reload
-uv run uvicorn my_os:app --reload
-
-# Or using Python directly
-python my_os.py
+# Start the backend server
+uv run my_os.py
 ```
 
-API will be available at `http://localhost:8000`
+### 2. Start the Frontend (UI)
+
+```bash
+cd agent-ui
+bun dev
+```
+
+- Backend API: `http://localhost:8000`
+- Frontend UI: `http://localhost:3000`
 
 ### API Endpoints
 
@@ -135,6 +162,8 @@ paper2saas/
 ├── tmp/
 │   ├── paper2saas.db  # SQLite event storage
 │   └── paper2saas.log # Application logs
+├── agent-ui/          # Next.js Frontend application
+├── ARTIFACTS_GUIDE.md # Documentation for UI Artifacts
 └── README.md
 ```
 
