@@ -15,30 +15,36 @@ from paper2saas_app.agents.fact_checker import fact_checker
 from paper2saas_app.agents.product_engineer import product_engineer
 from paper2saas_app.agents.report_generator import report_generator
 
+# --- OPTIMIZED FLAT TEAM (Minimized LLM Overhead) ---
+
 paper2saas_team = Team(
     name="Paper2SaaS",
-    role="Transform arXiv papers into validated SaaS opportunities with evidence-based analysis",
+    role="High-efficiency paper-to-SaaS transformation pipeline",
     model=get_mistral_model(AgentConfig.LARGE_MODEL),
     stream_intermediate_steps=False,
     instructions=PAPER2SAAS_TEAM_INSTRUCTIONS,
     members=[
-        paper_analyzer,
-        market_researcher,
-        fact_checker,
-        idea_generator,
-        validation_researcher,
-        strategic_advisor,
-        product_engineer,
-        report_generator,
+        paper_analyzer,          # LARGE_MODEL: Technical extraction
+        market_researcher,       # SMALL_MODEL: Data lookup
+        fact_checker,            # SMALL_MODEL: Verification
+        idea_generator,          # SMALL_MODEL: Synthesis
+        validation_researcher,   # LARGE_MODEL: Competitive research
+        strategic_advisor,       # LARGE_MODEL: Scoring
+        product_engineer,        # LARGE_MODEL: Tech planning
+        report_generator,        # SMALL_MODEL: Final formatting
     ],
     db=shared_db,
     store_events=AgentConfig.STORE_EVENTS,
     markdown=AgentConfig.ENABLE_MARKDOWN,
     show_members_responses=AgentConfig.SHOW_MEMBER_RESPONSES,
     add_datetime_to_context=True,
-    debug_mode=AgentConfig.DEBUG_MODE,
+    # --- COST & PERFORMANCE OPTIMIZATION ---
+    cache_session=True,          # In-memory hydration
+    enable_user_memories=True,    # Persistent context
+    # Use smaller model for supervisor if possible, but LARGE is safer for complex delegation
 )
-logger.info("Initialized paper2saas_team with 8 agents (including ProductEngineer)")
+
+logger.info("Optimized Paper2SaaS team for minimal latency and cost (Flat structure + Model Tiering)")
 
 def run_paper2saas(arxiv_id: str) -> dict:
     """
@@ -71,6 +77,16 @@ def run_paper2saas(arxiv_id: str) -> dict:
         session_id=session_id
     )
     
+    # --- PERFORMANCE METRICS ---
+    if result["status"] == "success":
+        run_output = result["result"]
+        metrics = {
+            "total_tokens": getattr(run_output, "metrics", None) and getattr(run_output.metrics, "total_tokens", "N/A"),
+            "execution_time": getattr(run_output, "metrics", None) and getattr(run_output.metrics, "time", "N/A"),
+        }
+        logger.info(f"Execution Metrics: {metrics}")
+        result["metrics"] = metrics
+
     # Add arxiv_id to result
     result["arxiv_id"] = arxiv_id
     result["session_id"] = session_id

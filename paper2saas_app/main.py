@@ -34,7 +34,6 @@ p2s_os = AgentOS(
         paper2saas_team,     # Main flow
         idea_roaster_team,   # Brutal critique
     ],
-    debug_mode=AgentConfig.DEBUG_MODE,
     tracing=False,
 )
 

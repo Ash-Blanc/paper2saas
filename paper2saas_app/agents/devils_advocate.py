@@ -19,4 +19,5 @@ devils_advocate = Agent(
     stream_intermediate_steps=False,
     instructions=DEVILS_ADVOCATE_INSTRUCTIONS,
     markdown=True,
+    references_format="yaml",
 )

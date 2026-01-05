@@ -8,6 +8,7 @@ from agno.tools.hackernews import HackerNewsTools
 from paper2saas_app.config import AgentConfig
 from paper2saas_app.models import ProductEngineerOutput
 from paper2saas_app.prompts.agents import PRODUCT_ENGINEER_INSTRUCTIONS
+from paper2saas_app.utils import shared_db
 
 product_engineer = Agent(
     name="ProductEngineer",
@@ -18,10 +19,11 @@ product_engineer = Agent(
         BaiduSearchTools(),
         HackerNewsTools(),
     ],
+    db=shared_db,
     
     
     stream_intermediate_steps=False,
-    output_schema=ProductEngineerOutput,
+    # output_schema=ProductEngineerOutput,
     instructions=PRODUCT_ENGINEER_INSTRUCTIONS,
     markdown=True,
 )

@@ -8,6 +8,7 @@ from agno.tools.firecrawl import FirecrawlTools
 from paper2saas_app.config import AgentConfig
 from paper2saas_app.models import MarketResearchOutput
 from paper2saas_app.prompts.agents import MARKET_RESEARCHER_INSTRUCTIONS
+from paper2saas_app.utils import shared_db
 
 market_researcher = Agent(
     name="MarketResearcher",
@@ -18,7 +19,8 @@ market_researcher = Agent(
         BaiduSearchTools(),
         FirecrawlTools(enable_search=True, enable_scrape=True),
     ],
-    output_schema=MarketResearchOutput,
+    db=shared_db,
+    # output_schema=MarketResearchOutput,
     stream_intermediate_steps=False,
     instructions=MARKET_RESEARCHER_INSTRUCTIONS,
     markdown=True,

@@ -9,6 +9,7 @@ from agno.tools.baidusearch import BaiduSearchTools
 from paper2saas_app.config import AgentConfig
 from paper2saas_app.models import PaperAnalysisOutput
 from paper2saas_app.prompts.agents import PAPER_ANALYZER_INSTRUCTIONS
+from paper2saas_app.utils import shared_db
 
 paper_analyzer = Agent(
     name="PaperAnalyzer",
@@ -20,12 +21,12 @@ paper_analyzer = Agent(
         BaiduSearchTools(),
         # ReasoningTools(add_instructions=True),
     ],
+    db=shared_db,
     reasoning=False,
-    
-    # 
-    # 
-    output_schema=PaperAnalysisOutput,
+    # reasoning_max_steps=AgentConfig.REASONING_MAX_STEPS,
+    # output_schema=PaperAnalysisOutput,
     stream_intermediate_steps=False,
     instructions=PAPER_ANALYZER_INSTRUCTIONS,
     markdown=True,
+    tool_call_limit=4,
 )
