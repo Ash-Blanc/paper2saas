@@ -40,4 +40,4 @@ p2s_os = AgentOS(
 app = p2s_os.get_app()
 
 if __name__ == "__main__":
-    p2s_os.serve(app="paper2saas_app.main:app", reload=True)
+    p2s_os.serve(app="app.main:app", reload=True)

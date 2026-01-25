@@ -83,6 +83,10 @@ const useChatActions = () => {
                 teams = await getTeams()
                 agents = await getAgents()
 
+                // Always set both agents and teams in store
+                setAgents(agents)
+                setTeams(teams)
+
                 if (!agentId && !teamId) {
                     const currentMode = useStore.getState().mode
 
@@ -92,18 +96,14 @@ const useChatActions = () => {
                         setSelectedModel(firstTeam.model?.provider || '')
                         setDbId(firstTeam.db_id || '')
                         setAgentId(null)
-                        setTeams(teams)
                     } else if (currentMode === 'agent' && agents.length > 0) {
                         const firstAgent = agents[0]
                         setMode('agent')
                         setAgentId(firstAgent.id)
                         setSelectedModel(firstAgent.model?.model || '')
                         setDbId(firstAgent.db_id || '')
-                        setAgents(agents)
                     }
                 } else {
-                    setAgents(agents)
-                    setTeams(teams)
                     if (agentId) {
                         const agent = agents.find((a) => a.id === agentId)
                         if (agent) {

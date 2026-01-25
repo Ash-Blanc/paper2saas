@@ -1,7 +1,7 @@
 import os
 import logging
 import warnings
-from agno.db.sqlite import SqliteDb
+from agno.db.postgres import PostgresDb
 from agno.models.mistral import MistralChat
 
 # Suppress annoying OpenAI API key warnings
@@ -24,8 +24,19 @@ else:
     logger = logging.getLogger(__name__)
     logger.addHandler(logging.NullHandler())
 
-# Shared DB for persistence and context sharing
-shared_db = SqliteDb(db_file="tmp/paper2saas.db")
+# --- Supabase PostgreSQL for session storage ---
+SUPABASE_PROJECT = os.getenv("SUPABASE_PROJECT")
+SUPABASE_PASSWORD = os.getenv("SUPABASE_PASSWORD")
+
+if SUPABASE_PROJECT and SUPABASE_PASSWORD:
+    SUPABASE_DB_URL = f"postgresql://postgres.{SUPABASE_PROJECT}:{SUPABASE_PASSWORD}@aws-0-us-east-1.pooler.supabase.com:6543/postgres"
+    shared_db = PostgresDb(db_url=SUPABASE_DB_URL)
+    logger.info("Using Supabase PostgreSQL for session storage")
+else:
+    # Fallback to SQLite if Supabase credentials not configured
+    from agno.db.sqlite import SqliteDb
+    shared_db = SqliteDb(db_file="tmp/paper2saas.db")
+    logger.warning("SUPABASE_PROJECT or SUPABASE_PASSWORD not set, falling back to SQLite")
 
 def get_mistral_model(model_id: str):
     """Returns a MistralChat model instance with the given ID."""
@@ -59,6 +70,41 @@ def run_team_with_error_handling(team, input_text: str, log_start_msg: str, log_
         # Pass session_id if provided
         kwargs = {"session_id": session_id} if session_id else {}
         result = team.run(input_text, **kwargs)
+        logger.info(log_success_msg)
+        return {
+            "status": "success",
+            "result": result
+        }
+    except Exception as e:
+        logger.error(f"Error during execution: {str(e)}", exc_info=True)
+        return {
+            "status": "error",
+            "error": str(e),
+            "error_type": type(e).__name__
+        }
+
+
+async def arun_team_with_error_handling(team, input_text: str, log_start_msg: str, log_success_msg: str, session_id: str = None) -> dict:
+    """
+    Async wrapper for executing a team with error handling.
+    Uses team.arun() for concurrent member execution.
+    
+    Args:
+        team: The team instance to run
+        input_text: The input prompt for the team
+        log_start_msg: Message to log at start
+        log_success_msg: Message to log on success
+        session_id: Optional session ID to ensure isolation
+        
+    Returns:
+        dict with status, result/error
+    """
+    logger.info(log_start_msg)
+    
+    try:
+        # Pass session_id if provided
+        kwargs = {"session_id": session_id} if session_id else {}
+        result = await team.arun(input_text, **kwargs)
         logger.info(log_success_msg)
         return {
             "status": "success",

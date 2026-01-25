@@ -16,6 +16,7 @@ dependencies = [
     "mistralai>=1.10.0",
     "numpy>=2.4.0",
     "openai>=2.14.0",
+    "psycopg2-binary>=2.9.10",
     "pycountry>=24.6.1",
     "pypdf>=6.5.0",
     "python-dotenv>=1.2.1",

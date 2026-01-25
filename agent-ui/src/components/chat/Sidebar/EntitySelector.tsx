@@ -32,23 +32,32 @@ export function EntitySelector() {
     const currentValue = mode === 'team' ? teamId : agentId
     const placeholder = mode === 'team' ? 'Select Team' : 'Select Agent'
 
+    // Use ref to prevent unnecessary re-triggers
+    const prevModeRef = React.useRef(mode)
+    const hasSyncedRef = React.useRef(false)
+
     useEffect(() => {
+        // Skip if mode hasn't actually changed and we've already synced
+        if (prevModeRef.current === mode && hasSyncedRef.current) {
+            return
+        }
+        prevModeRef.current = mode
+
         if (currentValue && currentEntities.length > 0) {
             const entity = currentEntities.find((item) => item.id === currentValue)
             if (entity) {
-                if (entity.model?.model && useStore.getState().selectedModel !== entity.model.model) {
+                const currentSelectedModel = useStore.getState().selectedModel
+                if (entity.model?.model && currentSelectedModel !== entity.model.model) {
                     setSelectedModel(entity.model.model)
-                }
-                if (mode === 'team' && teamId !== entity.id) {
-                    setTeamId(entity.id)
                 }
                 if (entity.model?.model) {
                     focusChatInput()
                 }
+                hasSyncedRef.current = true
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentValue, currentEntities, mode])
+    }, [currentValue, currentEntities.length, mode])
 
     const handleOnValueChange = (value: string) => {
         const newValue = value === currentValue ? null : value

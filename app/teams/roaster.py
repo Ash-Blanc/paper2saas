@@ -1,13 +1,13 @@
 from agno.team import Team
 import uuid
 
-from paper2saas_app.config import AgentConfig
-from paper2saas_app.utils import shared_db, logger, run_team_with_error_handling, get_mistral_model
-from paper2saas_app.prompts.agents import IDEA_ROASTER_TEAM_INSTRUCTIONS
+from app.config import AgentConfig
+from app.utils import shared_db, logger, run_team_with_error_handling, get_mistral_model
+from app.prompts.agents import IDEA_ROASTER_TEAM_INSTRUCTIONS
 
 # Import agents
-from paper2saas_app.agents.devils_advocate import devils_advocate
-from paper2saas_app.agents.market_skeptic import market_skeptic
+from app.agents.devils_advocate import devils_advocate
+from app.agents.market_skeptic import market_skeptic
 
 idea_roaster_team = Team(
     name="IdeaRoaster",

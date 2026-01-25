@@ -1,4 +1,4 @@
-from paper2saas_app.utils import get_mistral_model
+from app.utils import get_mistral_model
 from agno.agent import Agent
 from agno.tools.reasoning import ReasoningTools
 from agno.tools.arxiv import ArxivTools
@@ -6,10 +6,10 @@ from agno.tools.website import WebsiteTools
 from agno.tools.firecrawl import FirecrawlTools
 from agno.tools.baidusearch import BaiduSearchTools
 
-from paper2saas_app.config import AgentConfig
-from paper2saas_app.models import PaperAnalysisOutput
-from paper2saas_app.prompts.agents import PAPER_ANALYZER_INSTRUCTIONS
-from paper2saas_app.utils import shared_db
+from app.config import AgentConfig
+from app.models import PaperAnalysisOutput
+from app.prompts.agents import PAPER_ANALYZER_INSTRUCTIONS
+from app.utils import shared_db
 
 paper_analyzer = Agent(
     name="PaperAnalyzer",

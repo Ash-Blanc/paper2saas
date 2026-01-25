@@ -1,10 +1,10 @@
-from paper2saas_app.utils import get_mistral_model
+from app.utils import get_mistral_model
 from agno.agent import Agent
 
-from paper2saas_app.config import AgentConfig
-from paper2saas_app.models import IdeaGeneratorOutput
-from paper2saas_app.prompts.agents import IDEA_GENERATOR_INSTRUCTIONS
-from paper2saas_app.utils import shared_db
+from app.config import AgentConfig
+from app.models import IdeaGeneratorOutput
+from app.prompts.agents import IDEA_GENERATOR_INSTRUCTIONS
+from app.utils import shared_db
 
 idea_generator = Agent(
     name="IdeaGenerator",
